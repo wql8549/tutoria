@@ -43,4 +43,4 @@ class T_userViewSet(viewsets.ReadOnlyModelViewSet):
 
 @api_view()
 def hello_world(request):
-    return JsonResponse({"message": "Hello, world!"})
+    return JsonResponse({"message": "Hello, test  world!11"})
