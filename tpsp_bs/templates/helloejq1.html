@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>修改代码，右边会自动显示结果</title>
+<!--适应移动端-->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--css样式-->
+<style>
+	body{background-color: #EBEBEB}
+	.aaa{background-color: #CB4F51;padding: 10px;display: block}
+    td,th {border:2px solid red;} {border:2px solid red;}
+</style>
+<!--引用jquery库-->
+    {% load static %}
+<script src={% static "jquery/1.11.3/jquery.min.js" %}></script>
+</head>
+
+<body>
+
+<h3 class="clicktext">这是一个简单的点击效果</h3>
+<h4>一行三列:</h4>
+<table border="1">
+<tr>
+  <td>100</td>
+  <td>200</td>
+  <td>300</td>
+</tr>
+</table>
+<div class="aaa">
+    点击我
+</div>
+<p class="result"></p>
+<script type="text/javascript">
+	$(document).ready(function(){
+	      //点击
+		  $(".aaa").click(function(){
+
+		      $.getJSON('t_user/?format=json', function(data) {
+  var itemsh = [];
+  var items = [];
+
+  $.each(data, function(key, val) {
+      $.each(val,function (key1,val1) {
+      itemsh.push('<th >' + key1 + '</th>');
+    items.push('<td id="' + val1 + '">' + val1 + '</td>');})
+  });
+
+  $('<tr/>', {
+    'class': 'my-new-list',
+    html: itemsh.join('')
+  }).appendTo('body');
+  $('<tr/>', {
+    'class': 'my-new-list',
+    html: items.join('')
+  }).appendTo('body');
+});
+		  });
+		  //悬停到目标上
+		  $(".aaa").mouseover(function(){
+		 		$(this).css("background-color","#0060ff");
+		  });
+		  //悬停离开
+		  $(".aaa").mouseout(function(){
+		 		$(this).css("background-color","#CB4F51");
+		  });
+	});
+</script>
+
+</body>
+</html>
