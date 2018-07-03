@@ -38,9 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'quickstart.apps.QuickstartConfig',
+    #'quickstart.apps.QuickstartConfig',
     'rest_framework',
-    'tpsp_bs'
+    'tpsp_bs',
+    'quickstart'
 
 ]
 
@@ -124,14 +125,23 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+os.path.join(BASE_DIR, "static")]
+MEDIA_ROOT= 'static/file/'
+MEDIA_URL='/static/file/'
 
 REST_FRAMEWORK = {
     #'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAdminUser',),
 
     'PAGE_SIZE': 10
 }
-
-STATICFILES_DIRS = [
-os.path.join(BASE_DIR, "static")]
-MEDIA_ROOT= 'static/file/'
-MEDIA_URL='/static/file/'
+CACHES = {
+    'default': {
+        'BACKEND': 'redis_cache.RedisCache',
+        'LOCATION': '192.168.38.81'+':6379',
+        'OPTIONS': {
+            'DB': 6,
+            'PARSER_CLASS': 'redis.connection.HiredisParser'
+        }
+    }
+}

@@ -18,11 +18,15 @@ from django.conf.urls import url, include
 from rest_framework import routers
 from quickstart import views
 from django.contrib import admin
+from tpsp_bs import views as tviews
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
 router.register(r'groups', views.GroupViewSet)
 router.register(r't_user', views.T_userViewSet)
+router.register(r't_task', views.T_taskViewSet)
+#router.register(r'purchases/(?P<username>.+)/$', views.ReslistViewSet)
+
 
 
 
@@ -30,7 +34,12 @@ router.register(r't_user', views.T_userViewSet)
 # 如有额外需要, 我也为可视化API添加了登陆URLs.
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'test/',views.hello_world),
-    url(r'^', include(router.urls)),
+    url(r'test',views.hello_world),
+    url(r'hellojq$',tviews.hellojq),
+url(r'hellojq1',tviews.hellojq1),
+url(r'hellojq2',tviews.hellojq2),
+url(r'^purchases/(?P<username>\d+)/$', views.ReslistViewSet),
+url(r'^', include(router.urls)),
+
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]

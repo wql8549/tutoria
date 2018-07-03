@@ -8,10 +8,12 @@ from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
 from rest_framework.decorators import api_view,schema
 from rest_framework.schemas import AutoSchema
-from quickstart.serializers import UserSerializer, GroupSerializer,T_userSerializer
-from tpsp_bs.models import t_user
+from quickstart.serializers import UserSerializer, GroupSerializer,T_userSerializer,T_taskSerializer,ReslistSerializer
+from tpsp_bs.models import t_user,t_task,reslist
 from django.http import HttpResponse,JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework.decorators import action
+
 
 
 
@@ -37,10 +39,31 @@ class T_userViewSet(viewsets.ReadOnlyModelViewSet):
     API端：允许查看
     """
     queryset = t_user.objects.all()
+
     serializer_class = T_userSerializer
+class T_taskViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    API端：允许查看
+    """
+    queryset = t_task.objects.all()
+
+    serializer_class = T_taskSerializer
+
+class ReslistViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    API端：允许查看
+    """
+    queryset = reslist.objects.all()
+    serializer_class = ReslistSerializer
+
+    @action(detail=True)
+    def taskid(self, request):
+        taskid=request.data
+        print taskid
+
 
 
 
 @api_view()
 def hello_world(request):
-    return JsonResponse({"message": "Hello, world!"})
+    return HttpResponse([{"message": "Hello, world!liuxwindowtest2","message2": "Hello, world!liuxwindowtest2"}])
