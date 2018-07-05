@@ -23,7 +23,7 @@ class t_task(models.Model):
     t_taskname=models.CharField(max_length=40)
     resnum=models.IntegerField() #对应res数量，保持一致
     task_email=models.ManyToManyField(t_user)#任务关联收件人
-    creatdate=models.DateField(auto_created=True)
+    creatdate=models.DateField(default=timezone.now,null=True,blank=True)
     def __str__(self):
         return str(self.id)
 
@@ -41,6 +41,10 @@ class reslist(models.Model):
     update=models.DateTimeField(auto_now=True)
     def __str__(self):
         return str(self.id)
+
+    class Meta:
+        unique_together = ('taskid', 'creatdate')
+        ordering = ['creatdate']
 
 
 class t_taskput(models.Model):
