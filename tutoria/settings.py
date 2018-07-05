@@ -40,7 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'quickstart.apps.QuickstartConfig',
     'rest_framework',
-    'tpsp_bs'
+    'tpsp_bs',
+    #'bootstrap3'
+
 
 ]
 
@@ -130,6 +132,7 @@ REST_FRAMEWORK = {
 
     'PAGE_SIZE': 10
 }
+
 
 STATICFILES_DIRS = [
 os.path.join(BASE_DIR, "static")]

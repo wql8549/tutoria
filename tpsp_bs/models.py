@@ -13,6 +13,7 @@ class t_netbar(models.Model):
 class t_user(models.Model):
     ue_list=((0,'无'),(1,'默认发件人'),(2,'默认收件人'),(3,'发件人'),(4,'收件人'))
     username=models.CharField(max_length=20,verbose_name='用户名')
+    password=models.CharField(max_length=50)
     user_email=models.IntegerField(default=0,choices=ue_list,verbose_name='邮件关联') #0 非默认邮件，1、默认邮件发送，2、默认邮件收件人，3、默认邮件抄送人
     email=models.EmailField('email',blank=True,null=True)
     def __str__(self):
