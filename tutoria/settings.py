@@ -26,7 +26,7 @@ SECRET_KEY = 'yf_c$kra5f$x5^u80@mdyzs2+q*6s_g$_#itp$fsp!d!!zc++1'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.0.201']
+ALLOWED_HOSTS = ['192.168.0.201','192.168.39.82']
 
 
 # Application definition1
@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'quickstart.apps.QuickstartConfig',
     'rest_framework',
     'tpsp_bs',
+    'webserver',
     #'bootstrap3'
 
 
@@ -83,8 +84,12 @@ WSGI_APPLICATION = 'tutoria.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'OBServer',
+        'USER': 'Tpsp',
+        'PASSWORD': 'wql854986',
+        'HOST': '192.168.39.83',
+        'PORT': 3306,
     }
 }
 
@@ -111,9 +116,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'zh-Hans'#'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'#'UTC'
 
 USE_I18N = True
 
@@ -125,16 +130,42 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
-STATIC_URL = '/static/'
+
 
 REST_FRAMEWORK = {
     #'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAdminUser',),
 
     'PAGE_SIZE': 10
 }
-
-
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [
 os.path.join(BASE_DIR, "static")]
 MEDIA_ROOT= 'static/file/'
 MEDIA_URL='/static/file/'
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        }
+    },
+    'handlers': {
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler'
+        }
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    }
+}
+#login_required URL
+LOGIN_URL = '/webserver/login/'

@@ -1,44 +1,30 @@
-<!DOCTYPE html>
+{% load staticfiles %}
+<link href="{% static "css/adstyle.css"%}" rel="stylesheet" type="text/css" />
 <html>
 <head>
-	<meta charset="utf-8">
-	<title>tpsp注册</title>
-	<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
-	<script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
-	<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Login</title>
 </head>
+{% if password.is_wrong %}
+    <script type="text/javascript" src="{%static "js/jquery-1.11.0.min.js" %}"></script>
+    <script type="text/javascript" src="{%static "js/alert.js" %}"></script>
+    <link href="{%static "css/alert.css" %}" rel="stylesheet" type="text/css" />
+    <script type="text/javascript">
+        Alert.showMsg("错误!!用户名或密码错误!");
+        location.href="/webserver/login/"
+    </script>
+{% endif %}
 <body>
-
-<form action="{% url 'login' %}" method="post" accept-charset="utf-8" enctype="multipart/form-data"  class="form-horizontal" role="form">
-   {% csrf_token %}
-<div class="page-header ">
-    <h1>tpsp简易发布后台
-        <small>登录管理</small>
-    </h1>
-</div>
-
-        	<div class="form-group">
-		<label for="username" class="col-sm-2 control-label">名字</label>
-		<div class="col-sm-4">
-			<input type="text" class="form-control"  name="username"id="username"
-				   placeholder="请输入名字">
-		</div>
-	</div>
-
-   <div class="form-group">
-		<label for="password" class="col-sm-2 control-label">密码</label>
-		<div class="col-sm-4">
-			<input type="password"  class="form-control"  name="password" id="password"
-                  placeholder="登陆密码" value="" >
-		</div>
-	</div>
-  <div class="form-group">
-		<div class="col-sm-offset-2 col-sm-10">
-			<input type="submit" class="submit" value="立即登录">
-		</div>
-	</div>
-
- </form>
-
-    </body>
+    <div class="admin-ht">
+        <div class="adminBord">
+            <h1>运维管理平台</h1>
+        <h4>{{ nowtime }}</h4>
+            <form method="post" enctype="multipart/form-data" >
+                {% csrf_token %}
+                {{uf.as_p}}
+                <input type="submit" value="login" id="loging">
+            </form>
+        </div>
+    </div>
+</body>
 </html>
