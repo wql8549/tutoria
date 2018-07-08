@@ -30,3 +30,4 @@ class AlterForm(forms.Form):
     alter_email = forms.EmailField(label='add_email', max_length=20,initial='class', widget=forms.TextInput(
         attrs={'id': 'add_email', 'name': 'add_email', 'placeholder': '请输入您的邮箱'}))
     alter_isactive = forms.IntegerField(widget=forms.Select(choices=isactive))
+    

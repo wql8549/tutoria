@@ -88,7 +88,7 @@ DATABASES = {
         'NAME': 'OBServer',
         'USER': 'Tpsp',
         'PASSWORD': 'wql854986',
-        'HOST': '192.168.39.83',
+        'HOST': '192.168.0.220',
         'PORT': 3306,
     }
 }
@@ -168,4 +168,4 @@ LOGGING = {
     }
 }
 #login_required URL
-LOGIN_URL = '/webserver/login/'
+LOGIN_URL = '/tpsp_bs/login/'

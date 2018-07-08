@@ -55,8 +55,15 @@
                     <dd>
                         {{ alter_FormInput.alter_isactive }}
                         <script>
+                            alert({{ alter_is_active }})
                             document.getElementById("id_alter_isactive").value = "{{ alter_is_active }}"
                         </script>
+                    </dd>
+                </dl>
+                <dl>
+                    <dt><label for="add_isactive">文件上传：</label></dt>
+                    <>
+                        <input type="file">
                     </dd>
                 </dl>
                 <dl>

@@ -12,9 +12,10 @@ from django.shortcuts import get_object_or_404
 
 import time
 import platform
+import json
 
 from .forms import UserForm,RegisterForm,AlterForm
-from .models import t_task
+from .models import t_task,reslist
 def page_not_found(request):
     '''
     404报错页面
@@ -37,16 +38,20 @@ def login(req):
         return render(req,'login.html', {'uf': uf,'nowtime': nowtime })
     else:
         uf = UserForm(req.POST)
+
         if uf.is_valid():
             username = req.POST.get('username', '')
             password = req.POST.get('password', '')
             user = auth.authenticate(username = username,password = password)
             if user is not None and user.is_active:
                 auth.login(req,user)
+                print 1
                 return render(req, 'tpsp_bs_index.html',{'tpspname':req.user.username})
             else:
-                return render(req, 'login.html', {'uf': uf,'nowtime': nowtime, 'password_is_wrong': True})
+                print 2
+                return render(req, 'login.html', {'uf': uf,'nowtime': nowtime, 'password_is_wrong': '账号或密码错误，重新输入'})
         else:
+            print 3
             return render(req, 'login.html', {'uf': uf,'nowtime': nowtime })
 
 @login_required
@@ -149,6 +154,7 @@ def userAlter(req, id):
             print(alter_data)
             alter_email = alter_data.get('alter_email')
             alter_isactive = alter_data.get('alter_isactive')
+            file=alter_data.get('file')
             alt = User.objects.get(id=id)
             alt.email = alter_email
             alt.is_active = alter_isactive
@@ -179,7 +185,7 @@ def userAlter(req, id):
 
 
 
-
+@login_required
 def tasklist(request,id=0):
     """
     获取插件列表
@@ -189,5 +195,41 @@ def tasklist(request,id=0):
     """
     if id !=0:
         t_task.objects.filter(id=id).delete()
-        if request.method=='POST':
+    if request.method=='POST':
             print request.POST
+            pageSize = request.POST.get('pageSize')  # how manufactoryy items per page
+            pageNumber = request.POST.get('pageNumber')
+            offset = request.POST.get('offset')  # how many items in total in the DB
+            search = request.POST.get('search')
+            sort_column = request.POST.get('sort')  # which column need to sort
+            order = request.POST.get('order')  # ascending or descending
+            if search:  # 判断是否有搜索字
+                print 'search',search
+                all_records = t_task.objects.filter(id=search, asset_type=search, business_unit=search, idc=search)
+            else:
+                all_records = t_task.objects.all()   # must be wirte the line code here
+            print 'all_records',all_records
+            all_records_count = all_records.count()
+
+            if not offset:
+                offset = 0
+            if not pageSize:
+                pageSize = 10  # 默认是每页20行的内容，与前端默认行数一致
+            pageinator = Paginator(all_records, pageSize)  # 开始做分页
+            page = int(int(offset) / int(pageSize) + 1)
+            response_data = {'total': all_records_count, 'rows': []}
+            for server_li in pageinator.page(page):
+                response_data['rows'].append({
+                    "id": server_li.id if server_li.id else "",
+                    "taskname": server_li.t_taskname if server_li.t_taskname else "",
+                    "resnum": server_li.resnum if server_li.resnum else "",
+                    "email":'<br />'.join( [a.email for a in server_li.task_email.all()] if server_li.task_email else ""),
+                    "resfile": '<br />'.join(['res'+str(a.id)+': '+str(a.fileurl) for a in reslist.objects.filter(taskid=server_li.id)] if server_li.id else ""),
+                    "CPUS":'',# server_li.CPUS if server_li.CPUS else "",
+                    "OS":'',#server_li.OS if server_li.OS else "",
+                    "virtual1": '',#server_li.virtual1 if server_li.virtual1 else "",
+                    "status": '',#server_li.status if server_li.status else "",
+                })
+                print [str(a.fileurl) for a in reslist.objects.filter(taskid=server_li.id)] if server_li.id else ""
+            return HttpResponse(json.dumps(response_data))
+    return render(request, 'serverlist.html',{'tpspname':request.user.username})
