@@ -261,7 +261,7 @@ def taskAdd(req):
             task.email = add_task_email
             task.save()
             task.task_email.add(usera)
-            return render(req, 'taskadd.html', {'add_newuser': task_add,'tpspname':req.user.username})
+            return render(req, 'serverlist.html', {'tpspname': req.user.username})
         else:
             errors = task_add.errors
             return render(req, 'taskadd.html',{'add_taskFormInput': task_add,'errors': errors,'tpspname':req.user.username})
