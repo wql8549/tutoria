@@ -18,6 +18,8 @@ url(r'^user/add/$',views.userAdd),
 url(r'^user/alter/(.+)/$',views.userAlter,name='user_alter'),
 url(r'^cmdb/serverlist/$',views.tasklist, name='server_list'),
 url(r'^cmdb/serverlist/(.+)/$',views.tasklist,name='server_listcc'),
+url(r'^cmdb/serveradd/$',views.taskAdd,name='tpsp_add'),
+
   #  url(r'^cmdb/serveradd/$',views.serverAdd, name='server_add'),
 
 ]

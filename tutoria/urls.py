@@ -37,7 +37,7 @@ router.register(r't_user', views.T_userViewSet)
 # 如有额外需要, 我也为可视化API添加了登陆URLs.
 urlpatterns = [
 url(r'^admin/', admin.site.urls),
-url(r'^webserver/', include('webserver.urls')),
+#url(r'^webserver/', include('webserver.urls')),
 url(r'^tpsp_bs/', include('tpsp_bs.urls')),
     #url(r'^login', tviews.login_view, name='login'),
     #url(r'^logout', tviews.logout_view),

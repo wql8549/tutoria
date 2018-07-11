@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 import django.utils.timezone as timezone
 from django.db import models
 import time
+from django.contrib.auth.models import User
 
 # Create your models here.
 class t_netbar(models.Model):
@@ -22,7 +23,7 @@ class t_user(models.Model):
 class t_task(models.Model):
     t_taskname=models.CharField(max_length=40)
     resnum=models.IntegerField() #对应res数量，保持一致
-    task_email=models.ManyToManyField(t_user)#任务关联收件人
+    task_email=models.ManyToManyField(User)#任务关联收件人
     creatdate=models.DateField(default=timezone.now,null=True,blank=True)
     def __str__(self):
         return str(self.id)

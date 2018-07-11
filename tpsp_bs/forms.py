@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django import forms
+from django.contrib.auth.models import User
 
 class UserForm(forms.Form):
     username = forms.CharField(label='',max_length=100,widget=forms.TextInput(
@@ -30,4 +31,8 @@ class AlterForm(forms.Form):
     alter_email = forms.EmailField(label='add_email', max_length=20,initial='class', widget=forms.TextInput(
         attrs={'id': 'add_email', 'name': 'add_email', 'placeholder': '请输入您的邮箱'}))
     alter_isactive = forms.IntegerField(widget=forms.Select(choices=isactive))
-    
+class T_taskForm(forms.Form):
+
+    taskid=forms.IntegerField()
+    t_taskname=forms.CharField(label='taskname',max_length=40)
+    task_email=forms.ModelMultipleChoiceField(queryset=User.objects.all())

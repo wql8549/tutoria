@@ -14,7 +14,7 @@ import time
 import platform
 import json
 
-from .forms import UserForm,RegisterForm,AlterForm
+from .forms import UserForm,RegisterForm,AlterForm,T_taskForm
 from .models import t_task,reslist
 def page_not_found(request):
     '''
@@ -233,3 +233,38 @@ def tasklist(request,id=0):
                 print [str(a.fileurl) for a in reslist.objects.filter(taskid=server_li.id)] if server_li.id else ""
             return HttpResponse(json.dumps(response_data))
     return render(request, 'serverlist.html',{'tpspname':request.user.username})
+
+def taskAdd(req):
+    '''
+    添加任务
+    '''
+    if req.method == "POST":
+        task_add = T_taskForm(req.POST)
+        print 'task_add',task_add,task_add.is_valid()
+        if task_add.is_valid():
+            data = task_add.cleaned_data
+            print 'data',data
+            add_taskid = data.get('taskid')
+            add_t_taskname = data.get('t_taskname')
+            add_task_email = data.get('task_email', '')
+            print 'add_task_email', add_task_email
+            print 'add_task_email',add_task_email[0]
+
+            task = t_task()
+
+            usera=User.objects.filter(username=add_task_email[0]).values('id')[0]['id']
+            print 'usera', usera
+            print 'usera',usera
+            #task.taskid = add_taskid
+            task.resnum=1
+            task.t_taskname=add_t_taskname
+            task.email = add_task_email
+            task.save()
+            task.task_email.add(usera)
+            return render(req, 'taskadd.html', {'add_newuser': task_add,'tpspname':req.user.username})
+        else:
+            errors = task_add.errors
+            return render(req, 'taskadd.html',{'add_taskFormInput': task_add,'errors': errors,'tpspname':req.user.username})
+    else:
+        task_add = T_taskForm()
+    return render(req, 'taskadd.html', {'add_taskFormInput': task_add,'tpspname':req.user.username})
