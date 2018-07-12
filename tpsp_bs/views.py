@@ -185,7 +185,7 @@ def userAlter(req, id):
 
 
 
-@login_required
+#@login_required
 def tasklist(request,id=0):
     """
     获取插件列表
@@ -261,7 +261,7 @@ def taskAdd(req):
             task.email = add_task_email
             task.save()
             task.task_email.add(usera)
-            return render(req, 'taskadd.html', {'add_newuser': task_add,'tpspname':req.user.username})
+            return render(req, 'taskadd.html', {'add_newuser': task_add,'add_taskFormInput': T_taskForm(),'tpspname':req.user.username})
         else:
             errors = task_add.errors
             return render(req, 'taskadd.html',{'add_taskFormInput': task_add,'errors': errors,'tpspname':req.user.username})

@@ -6,6 +6,40 @@ import time
 from django.contrib.auth.models import User
 
 # Create your models here.
+#tpsp管理后台正式模型
+class platforminfo(models.Model):
+    id=models.AutoField()
+    platformname=models.CharField(max_length=40,null=True,blank=True);
+    puturl=models.URLField();
+
+class netbars(models.Model):
+
+    gid=models.IntegerField()
+    name=models.CharField(max_length=50)
+    platformid=models.ForeignKey(platforminfo)
+    creatdate=models.DateField(auto_created=True)
+
+class plugin_base(models.Model):
+    id=models.AutoField()
+    platform_id=models.ForeignKey(platforminfo)
+    tpsp_taskid=models.IntegerField()
+    name=models.CharField(max_length=50)
+    description=models.TextField(256)
+    user_id=models.ForeignKey(User)
+    created_at=models.DateField(auto_created=True,default=timezone.now)
+    updated_at=models.DateField()
+    deleted_at=models.DateField()
+    class Meta:
+        abstract=True
+class plugin_templation(plugin_base):
+    id=models.AutoField()
+    plugin_config=models.TextField(max_length=256)
+class plusins(plugin_base):
+    id=models.AutoField()
+    version=models.CharField()
+    
+
+
 class t_netbar(models.Model):
 
     gid=models.IntegerField()
