@@ -5,8 +5,27 @@ from django.contrib import admin
 
 # Register your models here.
 from django.contrib import admin
-from .models import t_user,t_netbar,t_task,t_taskput,reslist
+from .models import t_user,t_netbar,t_task,t_taskput,reslist,platforminfo,plugin_file,plugin_templation,plugins,plugin_temp_config
+
 from tutoria.settings import MEDIA_URL,ALLOWED_HOSTS
+@admin.register(platforminfo)
+class PlatforminfoAdmin(admin.ModelAdmin):
+    list_display = ('id','platformname','puturl')
+    ordering = ('id',)
+    list_filter = ('platformname',)
+@admin.register(plugin_temp_config)
+class plugin_temp_configAdmin(admin.ModelAdmin):
+    list_display = ('id','dec')
+
+class plugin_temp_configAdmin(admin.TabularInline):
+    model=plugin_temp_config
+    extra=0
+@admin.register(plugin_templation)
+class plugin_templation(admin.ModelAdmin):
+    inlines = [plugin_temp_configAdmin, ]
+    list_display = ('id','platform_id','tpsp_taskid','name','plugin_config')
+    def platform_id(self,obj):
+        return obj.id
 
 @admin.register(t_user)
 class T_userAdmin(admin.ModelAdmin):

@@ -8,9 +8,11 @@ from django.contrib.auth.models import User
 # Create your models here.
 #tpsp管理后台正式模型
 class platforminfo(models.Model):
-    id=models.AutoField()
+
     platformname=models.CharField(max_length=40,null=True,blank=True);
     puturl=models.URLField();
+    def __unicode__(self):
+        return self.platformname
 
 class netbars(models.Model):
 
@@ -20,23 +22,58 @@ class netbars(models.Model):
     creatdate=models.DateField(auto_created=True)
 
 class plugin_base(models.Model):
-    id=models.AutoField()
+
     platform_id=models.ForeignKey(platforminfo)
     tpsp_taskid=models.IntegerField()
     name=models.CharField(max_length=50)
-    description=models.TextField(256)
+    description=models.TextField(max_length=256)
     user_id=models.ForeignKey(User)
     created_at=models.DateField(auto_created=True,default=timezone.now)
     updated_at=models.DateField()
     deleted_at=models.DateField()
-    class Meta:
-        abstract=True
+    #class Meta:
+    #    abstract=True
+
+
 class plugin_templation(plugin_base):
-    id=models.AutoField()
+    """
+    插件模板设置
+    """
     plugin_config=models.TextField(max_length=256)
-class plusins(plugin_base):
-    id=models.AutoField()
-    version=models.CharField()
+
+class plugin_temp_config(models.Model):
+    plugin_tempid = models.ForeignKey(plugin_templation)
+    dec = models.CharField(max_length=40)
+    created_at=models.DateField(auto_created=True,default=timezone.now)
+    updated_at=models.DateField()
+
+
+
+class plugins(plugin_base):
+    """
+    插件设置
+    """
+    version=models.CharField(max_length=20)
+
+
+def get_plugfile_path(instance, filename):
+        print instance
+        print instance.id
+        print instance.plugin_id
+        print 'task_{0}/res_{1}_{2}_{3}'.format(instance.plugin_id, instance.id, int(time.time()), filename)
+        return 'task_{0}/res_{1}_{2}_{3}'.format(instance.plugin_id, instance.id, int(time.time()), filename)
+class plugin_file(models.Model):
+    ftypelist=((1,'配置'),(2,'文件'))
+    pluginid=models.ForeignKey(plugins)
+    name=models.CharField(max_length=40,null=True,blank=True)
+    ftype=models.IntegerField(default=1,choices=ftypelist,verbose_name='类型')
+    fpath=models.FileField(upload_to=get_plugfile_path,null=True,blank=True)
+    curl=models.URLField()
+    version=models.CharField(max_length=20)
+    created_at=models.DateField(auto_created=True,default=timezone.now)
+    updated_at=models.DateField()
+
+
     
 
 
