@@ -42,7 +42,9 @@ class plugin_templation(plugin_base):
     plugin_config=models.TextField(max_length=256)
 
 class plugin_temp_config(models.Model):
+    ptclist = ((1, u'配置'), (2, u'文件'))
     plugin_tempid = models.ForeignKey(plugin_templation)
+    ptcmodel = models.IntegerField(default=1, choices=ptclist, verbose_name='类型')
     dec = models.CharField(max_length=40)
     created_at=models.DateField(auto_created=True,default=timezone.now)
     updated_at=models.DateField()

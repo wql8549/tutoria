@@ -36,3 +36,28 @@ class T_taskForm(forms.Form):
     taskid=forms.IntegerField()
     t_taskname=forms.CharField(label='taskname',max_length=40)
     task_email=forms.ModelMultipleChoiceField(queryset=User.objects.all())
+class plugForm(forms.Form):
+    ptclist = [(1, u'配置'), (2, u'文件')]
+    tpsp_taskid=forms.IntegerField()
+    name=forms.CharField(max_length=50)
+    platform_id=forms.IntegerField(widget=forms.Select(choices=ptclist))
+    version=forms.IntegerField()
+    description=forms.CharField(max_length=50)
+class plug_fileForm(forms.Form):
+    ftypelist=((2,'文件'),)
+    pluginid=forms.IntegerField(label='插件id')
+    name=forms.CharField(label='文件名称',max_length=40)
+    ftype=forms.IntegerField(label='类型',widget=forms.Select(choices=ftypelist))
+    fpath=forms.FileField(label='文件地址')
+    version=forms.CharField(label='插件版本',max_length=20)
+
+class plug_configForm(forms.Form):
+    ftypelist=((1,'配置'),)
+    pluginid=forms.IntegerField()
+    name=forms.CharField(max_length=40)
+    ftype=forms.IntegerField(label='类型',widget=forms.Select(choices=ftypelist))
+    fpath=forms.URLField()
+    version=forms.CharField(max_length=20)
+
+
+

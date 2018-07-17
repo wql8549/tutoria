@@ -14,8 +14,8 @@ import time
 import platform
 import json
 
-from .forms import UserForm,RegisterForm,AlterForm,T_taskForm
-from .models import t_task,reslist
+from .forms import UserForm,RegisterForm,AlterForm,T_taskForm,plug_fileForm,plugForm
+from .models import t_task,reslist,plugin_templation,plugin_temp_config
 def page_not_found(request):
     '''
     404报错页面
@@ -184,8 +184,154 @@ def userAlter(req, id):
 
 
 
+@login_required
+def plug_temp_list(request,id=0):
+    """
+    获取插件模板列表
+    :param request:
+    :param id:
+    :return:
+    """
+    if id !=0:
+        plugin_templation.objects.filter(id=id).delete()
+    if request.method=='POST':
+            print request.POST
+            pageSize = request.POST.get('pageSize')  # how manufactoryy items per page
+            pageNumber = request.POST.get('pageNumber')
+            offset = request.POST.get('offset')  # how many items in total in the DB
+            search = request.POST.get('search')
+            sort_column = request.POST.get('sort')  # which column need to sort
+            order = request.POST.get('order')  # ascending or descending
+            if search:  # 判断是否有搜索字
+                print 'plug_temp_listsearch',search
+                all_records = plugin_templation.objects.filter(id=search, asset_type=search, business_unit=search, idc=search)
+            else:
+                all_records = plugin_templation.objects.all()   # must be wirte the line code here
+            print 'plug_temp_listall_records',all_records
+            all_records_count = all_records.count()
 
-#@login_required
+            if not offset:
+                offset = 0
+            if not pageSize:
+                pageSize = 10  # 默认是每页20行的内容，与前端默认行数一致
+            pageinator = Paginator(all_records, pageSize)  # 开始做分页
+            page = int(int(offset) / int(pageSize) + 1)
+            response_data = {'total': all_records_count, 'rows': []}
+            for server_li in pageinator.page(page):
+                response_data['rows'].append({
+                    "id": server_li.id if server_li.id else "",
+                    "taskname": server_li.name if server_li.name else "",
+                    "resnum": server_li.tpsp_taskid if server_li.tpsp_taskid else "0",
+                    "email":server_li.platform_id.platformname if server_li.platform_id else "",
+                    "resfile": '</br>'.join(['res'+str(a.id)+': '+unicode(a.get_ptcmodel_display())+'>'+str(a.dec) for a in plugin_temp_config.objects.filter(plugin_tempid=server_li.id)] if server_li.id else ""),
+                    #"CPUS":'',# server_li.CPUS if server_li.CPUS else "",
+                    #"OS":'',#server_li.OS if server_li.OS else "",
+                    #"virtual1": '',#server_li.virtual1 if server_li.virtual1 else "",
+                    "status": '启用',#server_li.status if server_li.status else "",
+                })
+                print 'plug_temp_list','<td />'.join(['res'+str(a.id)+': '+str(a.ptcmodel)+str(a.dec)+'</tb>' for a in plugin_temp_config.objects.filter(plugin_tempid=server_li.id)] if server_li.id else "")
+            return HttpResponse(json.dumps(response_data))
+    return render(request, 'plug_templationslist.html',{'tpspname':request.user.username})
+
+@login_required
+def plugslist(request,id=0):
+    """
+    获取插件模板列表
+    :param request:
+    :param id:
+    :return:
+    """
+    if id !=0:
+        plugin_templation.objects.filter(id=id).delete()
+    if request.method=='POST':
+            print request.POST
+            pageSize = request.POST.get('pageSize')  # how manufactoryy items per page
+            pageNumber = request.POST.get('pageNumber')
+            offset = request.POST.get('offset')  # how many items in total in the DB
+            search = request.POST.get('search')
+            sort_column = request.POST.get('sort')  # which column need to sort
+            order = request.POST.get('order')  # ascending or descending
+            if search:  # 判断是否有搜索字
+                print 'plug_temp_listsearch',search
+                all_records = plugin_templation.objects.filter(id=search, asset_type=search, business_unit=search, idc=search)
+            else:
+                all_records = plugin_templation.objects.all()   # must be wirte the line code here
+            print 'plug_temp_listall_records',all_records
+            all_records_count = all_records.count()
+
+            if not offset:
+                offset = 0
+            if not pageSize:
+                pageSize = 10  # 默认是每页20行的内容，与前端默认行数一致
+            pageinator = Paginator(all_records, pageSize)  # 开始做分页
+            page = int(int(offset) / int(pageSize) + 1)
+            response_data = {'total': all_records_count, 'rows': []}
+            for server_li in pageinator.page(page):
+                response_data['rows'].append({
+                    "id": server_li.id if server_li.id else "",
+                    "taskname": server_li.name if server_li.name else "",
+                    "resnum": server_li.tpsp_taskid if server_li.tpsp_taskid else "0",
+                    "email":server_li.platform_id.platformname if server_li.platform_id else "",
+                    "resfile": '</br>'.join(['res'+str(a.id)+': '+unicode(a.get_ptcmodel_display())+'>'+str(a.dec) for a in plugin_temp_config.objects.filter(plugin_tempid=server_li.id)] if server_li.id else ""),
+                    #"CPUS":'',# server_li.CPUS if server_li.CPUS else "",
+                    #"OS":'',#server_li.OS if server_li.OS else "",
+                    #"virtual1": '',#server_li.virtual1 if server_li.virtual1 else "",
+                    "status": '启用',#server_li.status if server_li.status else "",
+                })
+                print 'plugslist','<td />'.join(['res'+str(a.id)+': '+str(a.ptcmodel)+str(a.dec)+'</tb>' for a in plugin_temp_config.objects.filter(plugin_tempid=server_li.id)] if server_li.id else "")
+            return HttpResponse(json.dumps(response_data))
+    return render(request, 'plugslist.html',{'tpspname':request.user.username})
+@login_required
+def plugAdd(req,id=0):
+    '''
+    添加插件
+    '''
+    if req.method == "POST":
+        task_add = T_taskForm(req.POST)
+        print 'task_add',task_add,task_add.is_valid()
+        if task_add.is_valid():
+            data = task_add.cleaned_data
+            print 'data',data
+            add_taskid = data.get('taskid')
+            add_t_taskname = data.get('t_taskname')
+            add_task_email = data.get('task_email', '')
+            print 'add_task_email', add_task_email
+            print 'add_task_email',add_task_email[0]
+
+            task = t_task()
+
+            usera=User.objects.filter(username=add_task_email[0]).values('id')[0]['id']
+            print 'usera', usera
+            print 'usera',usera
+            #task.taskid = add_taskid
+            task.resnum=1
+            task.t_taskname=add_t_taskname
+            task.email = add_task_email
+            task.save()
+            task.task_email.add(usera)
+            return render(req, 'taskadd.html', {'add_newuser': task_add,'add_taskFormInput': T_taskForm(),'tpspname':req.user.username})
+        else:
+            errors = task_add.errors
+            return render(req, 'taskadd.html',{'add_taskFormInput': task_add,'errors': errors,'tpspname':req.user.username})
+    else:#必须id查询模板id对应数据，创给forms
+        a=plugin_templation.objects.get(id=id)
+        print 'plugin_templation',a.name
+        plugAdd = plugForm() #初始化插件模板信息
+        plugfile=[]
+        for it in plugin_temp_config.objects.filter(plugin_tempid=id):
+            it.id
+            print 'plugin_templation_config',it.id
+            plf=plug_fileForm()
+            plugfile.append(plf)
+            print 'plugin_plf', plf
+            print 'plugin_pllist', plugfile[0]
+
+            pass
+        print 'plugAdd',plugAdd
+
+    return render(req, 'plugadd.html', {'add_plugFormInput': plugAdd,'add_plugfileFormInput': plugfile,'tpspname':req.user.username})
+
+@login_required
 def tasklist(request,id=0):
     """
     获取插件列表
@@ -224,7 +370,7 @@ def tasklist(request,id=0):
                     "taskname": server_li.t_taskname if server_li.t_taskname else "",
                     "resnum": server_li.resnum if server_li.resnum else "",
                     "email":'<br />'.join( [a.email for a in server_li.task_email.all()] if server_li.task_email else ""),
-                    "resfile": '<br />'.join(['res'+str(a.id)+': '+str(a.fileurl) for a in reslist.objects.filter(taskid=server_li.id)] if server_li.id else ""),
+                    "resfile": '<tb />'.join(['res'+str(a.id)+': '+str(a.fileurl)+'</tb>' for a in reslist.objects.filter(taskid=server_li.id)] if server_li.id else ""),
                     "CPUS":'',# server_li.CPUS if server_li.CPUS else "",
                     "OS":'',#server_li.OS if server_li.OS else "",
                     "virtual1": '',#server_li.virtual1 if server_li.virtual1 else "",

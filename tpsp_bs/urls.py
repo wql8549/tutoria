@@ -16,6 +16,14 @@ urlpatterns = [
 url(r'^user/$',views.userList),
 url(r'^user/add/$',views.userAdd),
 url(r'^user/alter/(.+)/$',views.userAlter,name='user_alter'),
+url(r'^cmdb/plugtmplist/$',views.plug_temp_list, name='plug_temp_list'),
+url(r'^cmdb/plugtmplist/(.+)/$',views.plug_temp_list,name='plug_temp_listcc'),
+url(r'^cmdb/plugslist/$',views.plugslist, name='plugslist'),
+url(r'^cmdb/plugslist/(.+)/$',views.plugslist,name='plugslistcc'),
+url(r'^cmdb/plugadd/$',views.plugAdd,name='plug_add'),
+url(r'^cmdb/plugadd/(.+)/$',views.plugAdd,name='plug_add'),
+
+
 url(r'^cmdb/serverlist/$',views.tasklist, name='server_list'),
 url(r'^cmdb/serverlist/(.+)/$',views.tasklist,name='server_listcc'),
 url(r'^cmdb/serveradd/$',views.taskAdd,name='tpsp_add'),
